@@ -1,0 +1,143 @@
+
+1.app项目增加：
+数据库指令：1.schemamigration mdcomment(即app名)
+            2.syncdb   
+settings.py:添加app名 在INSTALLED_APPS里
+记住要在admin.py里添加admin.site.register()
+在app内新建一个urls.py 添加url(r'^$'，include)
+
+2.服务器工作路径:srv/www/www.enkicharity.com/mdknowledge
+  上传新app到服务器时，可以在服务器上Mddir 并修改组和所有者为siteadmin即可
+  apache2/site-available下可用域名
+  进到/srv/www/www.enkichartiy.com 输入source env/bin/activate 启动虚拟环境工作
+
+3 south总结：app 名字为 mdcomment 出现此处即代表相应app
+  为model建表：python manage.py schemamigration mdcomment --initial
+  model更改后查看修改：python manage.py schemamigration mdcomment --auto
+  提交到数据库：python manage.py migrate mdcomment
+  
+  迁移到south：
+  创建south_migrationhistory表： python manage.py syncdb
+  python manage.py convert_to_south mdcomment
+  资料链接： http://alexliyu.blog.163.com/blog/static/16275449620126239949478/
+             如果south migrate遇到问题，可以参考http://stackoverflow.com/questions/5814190/backwards-migration-with-django-south
+  
+4.SITE_ID 加过之后记得在settings.py里改一下
+
+5.绝对路径/admin/mdarticle 前面加一个/
+
+6.objects.filter():资料 http://www.douban.com/note/301166150/
+  filter时注意如果看结果是否在元组中用filter(__in)=元组名
+  filter 可以这样使用:MDArticle.objects.filter(author=author,status=MDArticle.PUBLISH)
+  filter 取一列数据库的值distinct().values(“列名”)
+  annotate用法：https://docs.djangoproject.com/en/1.7/topics/db/aggregation/
+  aggregate(sum,avg)可以求和，可以算平均数一类
+  objects.values_list('id',flat=True) 获取一列
+
+7 mysql 查询最近时间段语法：http://blog.163.com/liucy_18/blog/static/5319290620102410537687/
+
+8 SVN重置用户：relocate
+
+9 python 异常处理总结：http://blog.chinaunix.net/uid-22920230-id-3074716.html
+
+10.admin 界面想去掉一个admin，只需要在项目的url.py里admin.site.unregister（model）就可以
+
+11.from django.core.urlresolvers import reverse 
+ reverse('add', args=(4,5))
+ >>>/add/4/5
+ 可以用来生成网址 十分方便
+ 
+12.admin界面的view on site按钮的跳转是由该界面的Model.py中的get_absolute_url控制的
+
+13.re.match 正则表达式 注意利用
+
+14. 判断一个valuesqueryset是否存在用.exists()方法 判断为佳
+
+15. isintance(字段,类型) 可以判断这个字段是否为该类型 比如isintance(article.aid, long) 判断article.aid是否为Long类型
+
+16. 修改自定义tag源码时，先找到哪里调用了该方法 然后定义该tag， 并改写源码部分需要的地方    
+
+17. 为前台提供数据 修改views.py 新写一个方法，采用objects.filter()过滤获取数据 利用render把数据给指定templatename对应的Html页面 就可以                       
+
+18. '.'join()方法 实现Ip地址汇合
+
+19. django实现定时任务使用django-crontab 参考网址: http://www.zhidaow.com/post/django-crontab
+
+20. django性能优化 参考资料：http://www.cnblogs.com/descusr/p/3555675.html
+
+21.filter实现的时候要重写lookups,queryset方法，想实现文本输入要自己定义模板
+
+22. js输出console.log(变量)
+
+23. django整体功能简介 参考网站 http://f.dataguru.cn/thread-121153-1-1.html
+
+24. 过去一周，过去一个月：
+  now = datetime.datetime.now()
+  last_month = now - datetime.timedelta(days=30, hours=23, minutes=59, seconds=59)  
+  last_week = now - datetime.timedelta(days=6, hours=23, minutes=59, seconds=59)
+  
+25. sql 查询过去一个月数据：
+select * from mdarticle_mdarticle where DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <= date(date_added) 
+
+26.[django]在页面中正常显示包含html标记的内容
+参考资料 http://virusswb.blog.51cto.com/115214/795580
+
+27. 给前台Json数据 HttpResponse({'autosave_json':json.dumps(autosave_json)})
+
+28. 前台ajax form提交数据，指定Url,在后台urls.py中添加该url，并为之指定具体方法即可接收数据
+
+29. slugify可以将 test 1024 转变为test-1024
+
+30. urls.py 中url(name)中的name可以在前台模板中指到相对应的方法
+
+31. model定义中 添加了related_name，就可以在orm中利用外键进行关联
+
+32. 利用https://docs.djangoproject.com/en/1.7/howto/legacy-databases/#auto-generate-the-models 的知识可以对已有数据表进行创
+建Model,搭建后台
+
+33. 判断一个值是否为None 用 数值 is not None 去判断
+
+34. list_display 中的函数只有两个参数（self, obj） obj即自身对象
+
+35. 写admin中的filter 要定义并重写lookups(self,request,model_admin)和 queryset(self,request,queryset)两个方法
+
+36. 返回给ajax提供的数据时使用return HttpResponse(result)返回数据
+
+37. 在admin里定义方法，如果想返回链接 需要对该方法设置属性allow_tags = true eg:get_related_comment.allow_tags = True
+
+38. 在admin管理界面筛选：类似于 所有的作者中筛选 编辑->def formfield_for_foreignkey(self, db_field, request=None, **kwargs): 判断 if db_field.name == "editor": 实质上也就是对外键的操作
+
+39. 裁剪图片时遇到Getting “ cannot write mode P as JPEG” while operating on JPG image 问题时 将图片convert('RGB') 参考http://stackoverflow.com/questions/21669657/getting-cannot-write-mode-p-as-jpeg-while-operating-on-jpg-image
+
+40. 对admin中的外键def formfield_for_foreignkey(self, db_field, request=None, **kwargs): 可以控制admin中的显示结果
+
+41. 导数据库数据 mysql -u root -p root database < .sql 输入用户密码 以及导入的数据库名 和.sql文件
+
+42. 把数据处理成json格式：result = {'success':'1'} return HttpResponse(json.dumps(result))
+
+43.知识总结http://blog.csdn.net/xiarendeniao/article/details/7572864
+
+44. 获取Json：json.loads(request.GET.get('json'))
+
+45.github 源码：https://github.com/recall704/django-r3call-blog
+
+46.学习资料：http://www.cnblogs.com/linxiyue/p/4074141.html
+
+47 django整合Php:http://my.oschina.net/shniu/blog/228321
+
+48 django部署：http://my.oschina.net/jastme/blog/351301
+
+49 admin界面想显示哪些属性就用fields
+
+50 ALTER TABLE table1 ADD COLUMN foo INT DEFAULT 0; http://stackoverflow.com/questions/3569347/adding-a-new-sql-column-with-a-default-value
+
+51.在模板中遍历 int 型值 https://stackoverflow.com/questions/1107737/numeric-for-loop-in-django-templates/14389078#14389078
+
+52.在admin里添加按钮：在template/admin/(对应app)/(对应model)下添加：
+{% extends "admin/change_list.html" %}
+{% block object-tools-items %}
+
+    {{ block.super }}
+        
+{% endblock %}
+即可自定义template
