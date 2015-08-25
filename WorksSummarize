@@ -6,10 +6,7 @@ settings.py:添加app名 在INSTALLED_APPS里
 记住要在admin.py里添加admin.site.register()
 在app内新建一个urls.py 添加url(r'^$'，include)
 
-2.服务器工作路径:srv/www/www.enkicharity.com/mdknowledge
-  上传新app到服务器时，可以在服务器上Mddir 并修改组和所有者为siteadmin即可
-  apache2/site-available下可用域名
-  进到/srv/www/www.enkichartiy.com 输入source env/bin/activate 启动虚拟环境工作
+2.输入source env/bin/activate 启动虚拟环境工作
 
 3 south总结：app 名字为 mdcomment 出现此处即代表相应app
   为model建表：python manage.py schemamigration mdcomment --initial
