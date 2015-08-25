@@ -1,0 +1,50 @@
+1.安装apache:
+apt-get install apache2
+浏览器中访问服务器ip地址显示"it works"则证明apache正常运行
+
+2.安装python:
+可参考相关资料，输入python 后出现>>>即可
+
+3.安装pip、virtualenv
+pip是python的包管理工具，virtualenv提供虚拟环境，python项目将会在这个虚拟环境中运行
+apt-get install python-pip
+apt-get install python-virtualenv
+
+4.通过virtualenv创建虚拟环境
+假设我们已经创建或上传了django的项目，地址为/srv/www/SampleApp
+cd /srv/www/SampleApp
+virtualenv envInstalling distribute
+此时会生成一个env目录，即我们需要的虚拟环境，启用:source env/bin/activate 退出:deactivate
+
+5.安装django
+pip install django
+此处可以选择版本 如django==1.6.5 目前最新是1.8.3
+键入python，import django 无报错即成功
+
+6.安装mysqldb
+pip install MySQL-python
+如果出现mysql-config not found，请安装libmysqlclient-dev
+
+7.安装mod_wsgi
+apt-get install libapache2-mod-wsgi
+apache目录下有两个子目录需要关注，即sites-avaliable和sites-enable，前者包括了所有可用站点的配置文件，后者中文件是前者的软连接，表示启用该站点
+配置mod_wsgi:
+cd /etc/apache2/sites-available
+执行vim sampleapp并添加如下
+<VirtualHost *:80>
+...
+WSGIDaemonProcess sampleapp python-path=/srv/www/SampleApp:/ srv/www/SampleApp/env/lib/python2.X/site-pachages
+WSGIProcessGroup sampleapp
+WSGIScriptAlias / /src/www/SampleApp/SampleApp/wsgi.py 
+Alias /static/ /srv/www/SampleApp/static/
+...
+</VirtualHost *:80>
+解释一下：第一行生成了一个sampleapp的wsgi后台进程，进程名sampleapp随意起，但是尽量使用项目名称
+由于使用虚拟环境，需要指定python-path，包括由冒号分隔的两个部分，第一部分是项目路径，第二部分是env中python包的目录
+第二行告诉virtual host使用上面创建的wsgi后台进程
+第三行告诉apache和mod_wsgi去哪找wsgi的配置，这个wsgi.py是django项目创建时生成的
+第四行是对静态文件的配置
+
+配置完成后重启apache就可以了
+
+
